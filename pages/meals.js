@@ -12,15 +12,26 @@ export default function Meals() {
     fats: '',
     notes: ''
   })
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  // Recupera l'utente e carica i pasti
+  // Recupera l'utente e i suoi pasti
   useEffect(() => {
     const fetchUserAndMeals = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setUser(user)
-        fetchMeals(user.id)
+      const { data, error } = await supabase.auth.getUser()
+      if (error) {
+        setError('Errore nel recupero utente: ' + error.message)
+        setLoading(false)
+        return
       }
+      if (!data.user) {
+        setError('Nessun utente loggato.')
+        setLoading(false)
+        return
+      }
+
+      setUser(data.user)
+      fetchMeals(data.user.id)
     }
     fetchUserAndMeals()
   }, [])
@@ -32,7 +43,13 @@ export default function Meals() {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
-    if (!error) setMeals(data)
+    if (error) {
+      setError('Errore nel recupero dei pasti: ' + error.message)
+    } else {
+      setMeals(data)
+    }
+
+    setLoading(false)
   }
 
   const handleChange = (e) => {
@@ -41,12 +58,19 @@ export default function Meals() {
   }
 
   const addMeal = async () => {
-    if (!user) return
+    if (!user) {
+      setError('Utente non autenticato.')
+      return
+    }
+
     const { error } = await supabase
       .from('meals')
       .insert([{ ...newMeal, user_id: user.id }])
 
-    if (!error) {
+    if (error) {
+      setError('Errore nel salvataggio del pasto: ' + error.message)
+    } else {
+      setError(null)
       alert('Pasto salvato!')
       setNewMeal({ title: '', calories: '', proteins: '', carbs: '', fats: '', notes: '' })
       fetchMeals(user.id)
@@ -56,6 +80,10 @@ export default function Meals() {
   return (
     <div style={{ padding: 20 }}>
       <h1>I miei pasti 🍽️</h1>
+
+      {loading && <p>Caricamento in corso...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {user && <p style={{ color: 'green' }}>Utente loggato: {user.id}</p>}
 
       <h3>Aggiungi nuovo pasto</h3>
       <form onSubmit={(e) => { e.preventDefault(); addMeal() }}>
