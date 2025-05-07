@@ -45,7 +45,10 @@ export default function Profilo() {
         ...profilo,
       })
     setLoading(false)
-    if (!error) alert('Profilo salvato!')
+    if (!error) {
+      setMessaggio("Profilo salvato con successo ✅")
+      setTimeout(() => setMessaggio(null), 3000)
+    }
   }
 
   const aggiornaCampo = (e) => {
