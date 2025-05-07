@@ -1,3 +1,6 @@
+
+const [messaggio, setMessaggio] = useState(null)
+{messaggio && <p style={{ color: 'green' }}>{messaggio}</p>}
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
