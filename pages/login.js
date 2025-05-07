@@ -94,7 +94,7 @@ export default function Login() {
 
         {!isLogin && (
           <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} 6Ldp7DErAAAAABl_VN2xY1MZcxXxXTeOvIWjQW2q
+            sitekey="6Ldp7DErAAAAABl_VN2xY1MZcxXxXTeOvIWjQW2q"
             onChange={handleCaptcha}
           />
         )}
@@ -120,5 +120,6 @@ export default function Login() {
     </div>
   )
 }
+
 
 
