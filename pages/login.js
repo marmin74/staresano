@@ -1,21 +1,30 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [captchaToken, setCaptchaToken] = useState(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState(null)
   const router = useRouter()
+
+  const handleCaptcha = (token) => {
+    setCaptchaToken(token)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
-    // Optional: captcha check here
-    // TODO: integrazione Google reCAPTCHA (client-side)
+    if (!isLogin && !captchaToken) {
+      setMessage({ type: 'error', text: 'Verifica CAPTCHA richiesta' })
+      setLoading(false)
+      return
+    }
 
     let result
     if (isLogin) {
@@ -25,7 +34,7 @@ export default function Login() {
         email,
         password,
         options: {
-          emailRedirectTo: `${location.origin}/dashboard`, // redirect dopo conferma OTP
+          emailRedirectTo: `${location.origin}/dashboard`,
         }
       })
     }
@@ -39,7 +48,7 @@ export default function Login() {
         setMessage({ type: 'success', text: 'Accesso effettuato ✅' })
         router.push('/dashboard')
       } else {
-        setMessage({ type: 'success', text: 'Registrazione riuscita ✅ Controlla l’email per confermare.' })
+        setMessage({ type: 'success', text: 'Registrazione completata. Verifica la tua email ✅' })
       }
     }
   }
@@ -83,11 +92,11 @@ export default function Login() {
           required
         />
 
-        {/* CAPTCHA placeholder - inserisci qui il componente se usi Google reCAPTCHA */}
         {!isLogin && (
-          <div className="text-sm text-gray-500 italic">
-            ⚠️ Verifica CAPTCHA richiesta in produzione
-          </div>
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} 6Ldp7DErAAAAABl_VN2xY1MZcxXxXTeOvIWjQW2q
+            onChange={handleCaptcha}
+          />
         )}
 
         <button type="submit" disabled={loading} className="w-full bg-primary text-white py-2 rounded hover:bg-blue-400">
@@ -111,4 +120,5 @@ export default function Login() {
     </div>
   )
 }
+
 
