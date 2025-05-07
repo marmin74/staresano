@@ -3,23 +3,44 @@ import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 
 export default function Login() {
+  const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState(null)
   const router = useRouter()
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    // Optional: captcha check here
+    // TODO: integrazione Google reCAPTCHA (client-side)
+
+    let result
+    if (isLogin) {
+      result = await supabase.auth.signInWithPassword({ email, password })
+    } else {
+      result = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${location.origin}/dashboard`, // redirect dopo conferma OTP
+        }
+      })
+    }
+
     setLoading(false)
 
-    if (error) {
-      setMessage({ type: 'error', text: error.message })
+    if (result.error) {
+      setMessage({ type: 'error', text: result.error.message })
     } else {
-      setMessage({ type: 'success', text: 'Accesso effettuato ✅' })
-      router.push('/dashboard')
+      if (isLogin) {
+        setMessage({ type: 'success', text: 'Accesso effettuato ✅' })
+        router.push('/dashboard')
+      } else {
+        setMessage({ type: 'success', text: 'Registrazione riuscita ✅ Controlla l’email per confermare.' })
+      }
     }
   }
 
@@ -34,7 +55,9 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
-      <h1 className="text-2xl font-bold mb-4 text-primary">Accedi a StareSano</h1>
+      <h1 className="text-2xl font-bold mb-4 text-primary">
+        {isLogin ? 'Accedi' : 'Registrati'} a StareSano
+      </h1>
 
       {message && (
         <div className={`mb-4 p-2 rounded text-sm ${message.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
@@ -42,7 +65,7 @@ export default function Login() {
         </div>
       )}
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
           placeholder="Email"
@@ -59,14 +82,33 @@ export default function Login() {
           className="w-full border px-3 py-2 rounded"
           required
         />
+
+        {/* CAPTCHA placeholder - inserisci qui il componente se usi Google reCAPTCHA */}
+        {!isLogin && (
+          <div className="text-sm text-gray-500 italic">
+            ⚠️ Verifica CAPTCHA richiesta in produzione
+          </div>
+        )}
+
         <button type="submit" disabled={loading} className="w-full bg-primary text-white py-2 rounded hover:bg-blue-400">
-          {loading ? 'Accesso in corso...' : 'Accedi'}
+          {loading ? 'Attendi...' : isLogin ? 'Accedi' : 'Registrati'}
         </button>
       </form>
 
-      <button onClick={handleResetPassword} className="mt-4 text-sm text-blue-600 hover:underline">
-        Recupera password
-      </button>
+      {isLogin && (
+        <button onClick={handleResetPassword} className="mt-4 text-sm text-blue-600 hover:underline">
+          Recupera password
+        </button>
+      )}
+
+      <div className="mt-4 text-sm text-center">
+        {isLogin ? (
+          <>Non hai un account? <button onClick={() => setIsLogin(false)} className="text-blue-600 hover:underline">Registrati</button></>
+        ) : (
+          <>Hai già un account? <button onClick={() => setIsLogin(true)} className="text-blue-600 hover:underline">Accedi</button></>
+        )}
+      </div>
     </div>
   )
 }
+
