@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Stili globali */
 body {
-  @apply bg-secondary text-dark font-sans;
+  @apply bg-white text-dark font-sans;
+}
+
+a {
+  @apply text-primary hover:underline;
 }
 
 input, textarea, select {
@@ -11,5 +16,5 @@ input, textarea, select {
 }
 
 button {
-  @apply bg-primary text-white font-semibold py-2 px-4 rounded-xl transition hover:bg-blue-400;
+  @apply bg-primary text-white font-semibold py-2 px-4 rounded-xl transition hover:bg-green-500;
 }
