@@ -1,4 +1,4 @@
-import ReCAPTCHA from 'react-google-recaptcha'
+
 {
   "name": "staresano",
   "version": "1.0.0",
