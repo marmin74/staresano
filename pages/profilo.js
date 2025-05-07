@@ -17,14 +17,12 @@ export default function Profilo() {
   useEffect(() => {
     const fetchUserAndData = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) {
+        router.push('/login')
+        return
+      }
       setUser(user)
-      const { data } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-      if (data) setProfilo(data)
+      
     }
     fetchUserAndData()
   }, [])
