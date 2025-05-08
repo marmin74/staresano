@@ -4,7 +4,9 @@ import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
-  const [user, setUser] = useState(null);
+  import { User } from '@supabase/supabase-js';
+const [user, setUser] = useState<User | null>(null);
+
   const [users, setUsers] = useState([]);
   const router = useRouter();
 
