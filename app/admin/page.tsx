@@ -1,13 +1,12 @@
-'use client';
+''use client';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 export default function AdminPage() {
-  import { User } from '@supabase/supabase-js';
-const [user, setUser] = useState<User | null>(null);
-
-  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -23,6 +22,7 @@ const [user, setUser] = useState<User | null>(null);
       const { data, error } = await supabase.from('profiles').select('*');
       if (!error) setUsers(data);
     };
+
     getUserAndData();
   }, []);
 
@@ -40,11 +40,13 @@ const [user, setUser] = useState<User | null>(null);
           </tr>
         </thead>
         <tbody>
-          {users.map((u: any) => (
+          {users.map((u) => (
             <tr key={u.id} className="border-t">
               <td className="p-2">{u.email}</td>
               <td className="p-2">{u.subscription ? 'Attivo' : 'Nessuno'}</td>
-              <td className="p-2"><button className="text-[#a8d5ba]">Modifica</button></td>
+              <td className="p-2">
+                <button className="text-[#a8d5ba]">Modifica</button>
+              </td>
             </tr>
           ))}
         </tbody>
