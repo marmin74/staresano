@@ -1,20 +1,11 @@
+/* styles/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Stili globali */
+/* Personalizzazioni base */
 body {
-  @apply bg-white text-dark font-sans;
-}
-
-a {
-  @apply text-primary hover:underline;
-}
-
-input, textarea, select {
-  @apply border border-gray-300 rounded-xl px-3 py-2 w-full;
-}
-
-button {
-  @apply bg-primary text-white font-semibold py-2 px-4 rounded-xl transition hover:bg-green-500;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
 }
