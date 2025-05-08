@@ -2,32 +2,15 @@
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}"
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        primary: "#a8d5ba", // Verde oliva pastello
-        secondary: "#f0fdfa",
-        dark: "#1f2937"
+        primary: '#a8d5ba', // Verde oliva pastello STARESANO
+        dark: '#355e3b',     // Verde scuro di contrasto
       },
-      borderRadius: {
-        xl: "1rem",
-        "2xl": "1.5rem"
-      }
-    }
+    },
   },
-  plugins: []
-    ],
-    {
-      "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-          "@/*": ["./*"]
-        }
-      }
-    }
-    
-}
-
-
+  plugins: [],
+};
